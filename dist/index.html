@@ -3,51 +3,359 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#133d38">
+  <meta name="theme-color" content="#0d1b2a">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="통합과학 2의 355문제를 무작위로 풀고 Apple Pencil로 필기하세요.">
-  <title>통합과학 2 · 펜슬 문제집</title>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="고등 개념완성 통합과학2 & 통합사회2 펜슬 문제집 학습 포털">
+  <title>고등 개념완성 · 펜슬 문제집 학습관</title>
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="icon-180.png">
-  <link rel="icon" href="icon-192.png">
-  <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
+  <link rel="apple-touch-icon" href="science/icon-180.png">
+  <link rel="icon" href="science/icon-192.png">
+  <style>
+    :root {
+      --bg: #0b1320;
+      --card-bg: rgba(22, 36, 56, 0.75);
+      --card-border: rgba(255, 255, 255, 0.1);
+      --text-main: #f0f4f8;
+      --text-sub: #94a3b8;
+      --sci-accent: #10b981;
+      --sci-glow: rgba(16, 185, 129, 0.25);
+      --soc-accent: #f59e0b;
+      --soc-glow: rgba(245, 158, 11, 0.25);
+      --font: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(16, 185, 129, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      color: var(--text-main);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(32px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    header {
+      text-align: center;
+      padding: 30px 10px 40px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: #cbd5e1;
+      backdrop-filter: blur(10px);
+      margin-bottom: 18px;
+    }
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+    }
+    h1 {
+      font-size: clamp(28px, 5vw, 44px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 1.25;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p.subtitle {
+      font-size: clamp(15px, 2.5vw, 18px);
+      color: var(--text-sub);
+      line-height: 1.6;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 18px;
+      padding: 18px 24px;
+      margin-bottom: 40px;
+      backdrop-filter: blur(10px);
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .stat-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-top: 4px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 28px;
+      margin-bottom: 48px;
+    }
+    .card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 34px 30px;
+      backdrop-filter: blur(20px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card.science {
+      box-shadow: 0 10px 40px -10px var(--sci-glow);
+    }
+    .card.science:hover {
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+    .card.social {
+      box-shadow: 0 10px 40px -10px var(--soc-glow);
+    }
+    .card.social:hover {
+      border-color: rgba(245, 158, 11, 0.5);
+    }
+
+    .card-icon-wrap {
+      width: 60px;
+      height: 60px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 32px;
+      margin-bottom: 22px;
+    }
+    .science .card-icon-wrap {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.35));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+    }
+    .social .card-icon-wrap {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.35));
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #fbbf24;
+    }
+
+    .card-title {
+      font-size: 24px;
+      font-weight: 750;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .card-meta {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .tag {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 11px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: #cbd5e1;
+    }
+
+    .btn-group {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-primary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 15px 20px;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+    }
+    .science .btn-primary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+    }
+    .science .btn-primary:hover {
+      background: linear-gradient(135deg, #059669, #047857);
+      box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5);
+    }
+    .social .btn-primary {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
+    }
+    .social .btn-primary:hover {
+      background: linear-gradient(135deg, #d97706, #b45309);
+      box-shadow: 0 6px 25px rgba(245, 158, 11, 0.5);
+    }
+
+    .info-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 20px;
+      padding: 26px 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .info-item h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .info-item p {
+      font-size: 13.5px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: #64748b;
+    }
+  </style>
 </head>
 <body>
-<header class="topbar">
-  <a class="brand" href="./" aria-label="펜슬 문제집 홈"><span class="brand-icon">✎</span><span>펜슬 문제집<small>개념완성 · 통합과학 2</small></span></a>
-  <div class="top-actions"><span id="save-status" role="status">준비 중</span><button id="help" class="quiet">사용법</button></div>
-</header>
-<div id="warning" class="warning" role="alert" hidden></div>
-<div class="layout">
-  <aside class="sidebar">
-    <div class="eyebrow">MY STUDY</div><h1>한 문제씩,<br>내 생각을 쓰다.</h1>
-    <p class="muted intro">문제 위에도, 아래 빈 공간에도<br>자유롭게 풀이를 적어 보세요.</p>
-    <form id="filters" class="filter-card">
-      <label class="section-label">출제 범위 <span>책 쪽수</span></label>
-      <div class="range"><input id="start" type="number" min="1" max="176" value="22" aria-label="시작 쪽수" required><span>—</span><input id="end" type="number" min="1" max="176" value="176" aria-label="끝 쪽수" required></div>
-      <label class="check"><input id="review-only" type="checkbox"> 별표한 문제만 풀기 <span id="review-count">0</span></label>
-      <button class="primary wide" type="submit">↻ 새로 섞어 시작</button>
-    </form>
-    <div class="session-card"><div class="section-label">이번 학습 <span id="progress-text">0 / 355</span></div><progress id="progress" max="355" value="0"></progress><p>한 바퀴 동안 중복 없이 출제합니다.</p></div>
-    <details class="storage"><summary>보관함 · 백업</summary><button id="export">필기 백업 내보내기</button><button id="import">백업 불러오기</button><input id="backup-file" type="file" accept="application/json,.json" hidden><button id="download">현재 풀이 이미지 저장</button><button id="offline">오프라인용 문제 저장</button><span id="offline-status" role="status"></span></details>
-    <p class="side-note">355문제 · 그림과 수식 원본 유지<br>개념 체크·탐구 활동 제외<br>정답·해설 별책 미포함</p>
-  </aside>
-  <main>
-    <div class="question-heading"><div><span class="eyebrow" id="question-page">SCIENCE NOTE</span><h2 id="question-title">문제를 준비하고 있어요</h2></div><button id="bookmark" aria-pressed="false">☆ 다시 풀기</button></div>
-    <div class="toolbar" aria-label="필기 도구">
-      <div class="tool-group"><button data-tool="pen" class="selected" aria-pressed="true">✎ 펜</button><button data-tool="marker" aria-pressed="false">▰ 형광펜</button><button data-tool="eraser" aria-pressed="false">▱ 지우개</button><button data-tool="move" aria-pressed="false">✥ 이동</button></div>
-      <div class="tool-group colors" aria-label="펜 색상"><button data-color="#233b50" style="--swatch:#233b50" aria-label="남색" aria-pressed="true" class="selected"></button><button data-color="#d14a48" style="--swatch:#d14a48" aria-label="빨강" aria-pressed="false"></button><button data-color="#247465" style="--swatch:#247465" aria-label="초록" aria-pressed="false"></button><button data-color="#d7a526" style="--swatch:#d7a526" aria-label="노랑" aria-pressed="false"></button></div>
-      <label class="size-label">굵기 <input id="pen-size" type="range" min="1" max="9" value="3" aria-label="펜 굵기"></label>
-      <div class="tool-group"><button id="undo" aria-label="실행 취소" title="실행 취소">↶</button><button id="redo" aria-label="다시 실행" title="다시 실행">↷</button><button id="clear" title="현재 문제의 필기 모두 지우기">비우기</button></div>
+
+<div class="container">
+  <header>
+    <div class="badge">
+      <span class="badge-dot"></span>
+      <span>아이패드 · Apple Pencil 최적화 러닝 허브</span>
     </div>
-    <div class="paper-options"><label class="check"><input id="pencil-only" type="checkbox" checked> 펜슬 전용</label><span id="mode-hint">필기 중 손 터치는 무시해요. 스크롤은 ‘이동’ 도구로.</span><button id="source" class="quiet">원본 보기 ↗</button></div>
-    <div id="paper-scroll" class="paper-scroll"><div id="paper" class="paper"><img id="question-image" alt="현재 문제 원본" draggable="false"><div class="scratch-label">나의 풀이 <span>생각을 자유롭게 적어 보세요</span></div><canvas id="ink" aria-label="문제와 풀이 공간에 필기하는 캔버스"></canvas></div></div>
-    <nav class="navigation" aria-label="문제 이동"><button id="previous">← 이전 문제</button><span id="position">—</span><button id="next" class="primary">다음 문제 →</button></nav>
-  </main>
+    <h1>개념완성 펜슬 문제집</h1>
+    <p class="subtitle">
+      고등 1학년 2학기 핵심 기출 & 개념 완성<br>
+      Apple Pencil로 문제 위에 직접 풀고, 무작위로 실전을 대비하세요.
+    </p>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">720문제</div>
+      <div class="stat-desc">전수 수록 (과학 355 + 사회 365)</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100% 원본</div>
+      <div class="stat-desc">도표·그림·수식 원본 해상도 유지</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">오프라인 지원</div>
+      <div class="stat-desc">홈 화면 추가 시 인터넷 없이 실행</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- 통합과학 2 -->
+    <div class="card science">
+      <div class="card-icon-wrap">🧪</div>
+      <h2 class="card-title">개념완성 · 통합과학 2</h2>
+      <p class="card-meta">
+        물리학 · 화학 · 생명과학 · 지구과학<br>
+        교재 22쪽 ~ 176쪽 범위 <strong>355문제 전수 수록</strong>
+      </p>
+      <div class="tags">
+        <span class="tag">Apple Pencil 필기</span>
+        <span class="tag">필압 감지</span>
+        <span class="tag">쪽수별 랜덤</span>
+        <span class="tag">별표 복습</span>
+      </div>
+      <div class="btn-group">
+        <a class="btn-primary" href="./science/">
+          <span>통합과학 2 풀러 가기</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 통합사회 2 -->
+    <div class="card social">
+      <div class="card-icon-wrap">🌍</div>
+      <h2 class="card-title">개념완성 · 통합사회 2</h2>
+      <p class="card-meta">
+        지리 · 일반사회 · 윤리 · 역사<br>
+        교재 12쪽 ~ 169쪽 범위 <strong>365문제 전수 수록</strong>
+      </p>
+      <div class="tags">
+        <span class="tag">Apple Pencil 필기</span>
+        <span class="tag">필압 감지</span>
+        <span class="tag">쪽수별 랜덤</span>
+        <span class="tag">별표 복습</span>
+      </div>
+      <div class="btn-group">
+        <a class="btn-primary" href="./social/">
+          <span>통합사회 2 풀러 가기</span>
+          <span>→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-section">
+    <div class="info-item">
+      <h3>📱 앱처럼 홈 화면에 추가하기</h3>
+      <p>Safari 브라우저 상단의 <strong>공유(⎋) → [홈 화면에 추가]</strong>를 누르면 주소창 없는 전체 화면 전용 앱으로 등록되어 필기 공간을 넓게 쓸 수 있습니다.</p>
+    </div>
+    <div class="info-item">
+      <h3>✏️ Apple Pencil 필기 안내</h3>
+      <p>펜슬을 대면 손가락 터치는 자동으로 무시됩니다. 두 손가락으로 화면을 넘기거나 확대할 때는 상단 도구에서 <strong>[이동]</strong>을 선택하세요.</p>
+    </div>
+    <div class="info-item">
+      <h3>💾 문제별 자동 저장</h3>
+      <p>내가 쓴 필기는 문제별로 브라우저에 안전하게 자동 저장됩니다. 사이트 캐시 삭제에 대비해 <strong>[보관함 · 백업]</strong>에서 파일로 백업할 수 있습니다.</p>
+    </div>
+  </div>
+
+  <footer>
+    개념완성 통합과학2 · 통합사회2 독립형 펜슬 학습관 | 비밀번호·로그인 불필요
+  </footer>
 </div>
-<dialog id="help-dialog"><div class="dialog-head"><h2>아이패드에서 시작하기</h2><button data-close="help-dialog" aria-label="닫기">✕</button></div><ol><li>Safari에서 이 주소를 열고 로그인하세요.</li><li>공유 메뉴 → <strong>홈 화면에 추가</strong>로 앱처럼 실행할 수 있어요.</li><li><strong>펜</strong>을 선택하고 Apple Pencil로 문제 위에 쓰세요. 필기는 문제별로 자동 저장돼요.</li><li>스크롤·확대는 <strong>이동</strong> 도구에서 손가락으로 하세요. 펜슬 전용을 끄면 손가락으로도 쓸 수 있어요.</li><li><strong>보관함 · 백업</strong>에서 필기를 파일로 보관하세요. 기기·브라우저 간에는 백업 파일로 옮길 수 있어요.</li></ol><p>필기는 이 브라우저에 저장됩니다. 방문 기록·사이트 데이터 삭제 시 사라질 수 있으므로 중요한 필기는 백업하세요. 홈 화면 앱과 Safari의 저장 공간이 다를 수 있어요.</p><p>필압을 제공하는 펜슬에서는 누르는 힘에 따라 펜 굵기가 달라집니다. 펜슬의 이중 탭·스퀴즈 기능은 지원하지 않습니다.</p><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent" target="_blank" rel="noreferrer">입력 기술: 표준 Pointer Events</a></p></dialog>
-<dialog id="source-dialog" class="source-dialog"><div class="dialog-head"><h2 id="source-title">원본 페이지</h2><button data-close="source-dialog" aria-label="닫기">✕</button></div><p>원본은 확인용입니다. 필기는 문제 화면에서 해 주세요.</p><img id="source-image" alt="현재 문제의 전체 원본 페이지"></dialog>
-<div id="toast" role="status" hidden></div>
-</body></html>
+
+</body>
+</html>

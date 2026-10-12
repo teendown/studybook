@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#133d38">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="통합과학 2의 355문제를 무작위로 풀고 Apple Pencil로 필기하세요.">
+  <title>통합과학 2 · 펜슬 문제집</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <link rel="icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="../" class="back-home-btn" title="대시보드로 이동" style="text-decoration:none;display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:#e2ece5;color:#133d38;border-radius:8px;font-size:12px;font-weight:700;">🏠 대시보드</a>
+    <a class="brand" href="./" aria-label="펜슬 문제집 홈"><span class="brand-icon">✎</span><span>펜슬 문제집<small>개념완성 · 통합과학 2</small></span></a>
+  </div>
+  <div class="top-actions"><span id="save-status" role="status">준비 중</span><button id="help" class="quiet">사용법</button></div>
+</header>
+<div id="warning" class="warning" role="alert" hidden></div>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="eyebrow">MY STUDY</div><h1>한 문제씩,<br>내 생각을 쓰다.</h1>
+    <p class="muted intro">문제 위에도, 아래 빈 공간에도<br>자유롭게 풀이를 적어 보세요.</p>
+    <form id="filters" class="filter-card">
+      <label class="section-label">출제 범위 <span>책 쪽수</span></label>
+      <div class="range"><input id="start" type="number" min="1" max="176" value="22" aria-label="시작 쪽수" required><span>—</span><input id="end" type="number" min="1" max="176" value="176" aria-label="끝 쪽수" required></div>
+      <label class="check"><input id="review-only" type="checkbox"> 별표한 문제만 풀기 <span id="review-count">0</span></label>
+      <button class="primary wide" type="submit">↻ 새로 섞어 시작</button>
+    </form>
+    <div class="session-card"><div class="section-label">이번 학습 <span id="progress-text">0 / 355</span></div><progress id="progress" max="355" value="0"></progress><p>한 바퀴 동안 중복 없이 출제합니다.</p></div>
+    <details class="storage"><summary>보관함 · 백업</summary><button id="export">필기 백업 내보내기</button><button id="import">백업 불러오기</button><input id="backup-file" type="file" accept="application/json,.json" hidden><button id="download">현재 풀이 이미지 저장</button><button id="offline">오프라인용 문제 저장</button><span id="offline-status" role="status"></span></details>
+    <p class="side-note">355문제 · 그림과 수식 원본 유지<br>개념 체크·탐구 활동 제외<br>정답·해설 별책 미포함</p>
+  </aside>
+  <main>
+    <div class="question-heading"><div><span class="eyebrow" id="question-page">SCIENCE NOTE</span><h2 id="question-title">문제를 준비하고 있어요</h2></div><button id="bookmark" aria-pressed="false">☆ 다시 풀기</button></div>
+    <div class="toolbar" aria-label="필기 도구">
+      <div class="tool-group"><button data-tool="pen" class="selected" aria-pressed="true">✎ 펜</button><button data-tool="marker" aria-pressed="false">▰ 형광펜</button><button data-tool="eraser" aria-pressed="false">▱ 지우개</button><button data-tool="move" aria-pressed="false">✥ 이동</button></div>
+      <div class="tool-group colors" aria-label="펜 색상"><button data-color="#233b50" style="--swatch:#233b50" aria-label="남색" aria-pressed="true" class="selected"></button><button data-color="#d14a48" style="--swatch:#d14a48" aria-label="빨강" aria-pressed="false"></button><button data-color="#247465" style="--swatch:#247465" aria-label="초록" aria-pressed="false"></button><button data-color="#d7a526" style="--swatch:#d7a526" aria-label="노랑" aria-pressed="false"></button></div>
+      <label class="size-label">굵기 <input id="pen-size" type="range" min="1" max="9" value="3" aria-label="펜 굵기"></label>
+      <div class="tool-group"><button id="undo" aria-label="실행 취소" title="실행 취소">↶</button><button id="redo" aria-label="다시 실행" title="다시 실행">↷</button><button id="clear" title="현재 문제의 필기 모두 지우기">비우기</button></div>
+    </div>
+    <div class="paper-options"><label class="check"><input id="pencil-only" type="checkbox" checked> 펜슬 전용</label><span id="mode-hint">필기 중 손 터치는 무시해요. 스크롤은 ‘이동’ 도구로.</span><button id="source" class="quiet">원본 보기 ↗</button></div>
+    <div id="paper-scroll" class="paper-scroll"><div id="paper" class="paper"><img id="question-image" alt="현재 문제 원본" draggable="false"><div class="scratch-label">나의 풀이 <span>생각을 자유롭게 적어 보세요</span></div><canvas id="ink" aria-label="문제와 풀이 공간에 필기하는 캔버스"></canvas></div></div>
+    <nav class="navigation" aria-label="문제 이동"><button id="previous">← 이전 문제</button><span id="position">—</span><button id="next" class="primary">다음 문제 →</button></nav>
+  </main>
+</div>
+<dialog id="help-dialog"><div class="dialog-head"><h2>아이패드에서 시작하기</h2><button data-close="help-dialog" aria-label="닫기">✕</button></div><ol><li>Safari에서 이 주소를 열고 로그인하세요.</li><li>공유 메뉴 → <strong>홈 화면에 추가</strong>로 앱처럼 실행할 수 있어요.</li><li><strong>펜</strong>을 선택하고 Apple Pencil로 문제 위에 쓰세요. 필기는 문제별로 자동 저장돼요.</li><li>스크롤·확대는 <strong>이동</strong> 도구에서 손가락으로 하세요. 펜슬 전용을 끄면 손가락으로도 쓸 수 있어요.</li><li><strong>보관함 · 백업</strong>에서 필기를 파일로 보관하세요. 기기·브라우저 간에는 백업 파일로 옮길 수 있어요.</li></ol><p>필기는 이 브라우저에 저장됩니다. 방문 기록·사이트 데이터 삭제 시 사라질 수 있으므로 중요한 필기는 백업하세요. 홈 화면 앱과 Safari의 저장 공간이 다를 수 있어요.</p><p>필압을 제공하는 펜슬에서는 누르는 힘에 따라 펜 굵기가 달라집니다. 펜슬의 이중 탭·스퀴즈 기능은 지원하지 않습니다.</p><p><a href="https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent" target="_blank" rel="noreferrer">입력 기술: 표준 Pointer Events</a></p></dialog>
+<dialog id="source-dialog" class="source-dialog"><div class="dialog-head"><h2 id="source-title">원본 페이지</h2><button data-close="source-dialog" aria-label="닫기">✕</button></div><p>원본은 확인용입니다. 필기는 문제 화면에서 해 주세요.</p><img id="source-image" alt="현재 문제의 전체 원본 페이지"></dialog>
+<div id="toast" role="status" hidden></div>
+</body></html>
