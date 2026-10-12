@@ -12,6 +12,27 @@ function toast(message) {
   $('toast').textContent = message; $('toast').hidden = false;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => $('toast').hidden = true, 3500);
 }
+function navToDashboard(e) {
+  if (e) e.preventDefault();
+  if (window.location.protocol === 'file:' || !window.location.host) {
+    if (confirm('독립형 오프라인 파일로 실행 중입니다. 온라인 웹 대시보드(studybook)를 여시겠습니까?')) {
+      window.open('https://teendown.github.io/studybook/', '_blank');
+    }
+    return;
+  }
+  const path = window.location.pathname;
+  const match = path.match(/^(.*\/)(?:science|social)(?:\/.*)?$/i);
+  if (match && match[1]) {
+    window.location.href = match[1];
+    return;
+  }
+  const matchNoSlash = path.match(/^(.*)\/(?:science|social)$/i);
+  if (matchNoSlash && matchNoSlash[1]) {
+    window.location.href = matchNoSlash[1] + '/';
+    return;
+  }
+  window.location.href = '../';
+}
 function warn(message) { $('warning').textContent = message; $('warning').hidden = false; }
 function storageFailure() {
   dbFailed = true;

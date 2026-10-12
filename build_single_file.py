@@ -5,7 +5,7 @@ import json
 import re
 
 BASE = Path(__file__).resolve().parent
-DIST = BASE / 'dist'
+DIST = BASE / 'dist' / 'science'
 OUTPUT = BASE.parent / '통합과학2_아이패드_필기.html'
 
 def data_url(path):
