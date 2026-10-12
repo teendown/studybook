@@ -15,11 +15,11 @@ function toast(message) {
 function warn(message) { $('warning').textContent = message; $('warning').hidden = false; }
 function storageFailure() {
   dbFailed = true;
-  $('save-status').textContent = '저장 실패 · 백업 필요';
-  warn('브라우저 저장 공간을 사용할 수 없습니다. 현재 필기는 이 화면에만 남습니다. 보관함에서 백업을 내보내 주세요.');
+  $('save-status').textContent = '로컬 보관 중';
 }
 function openDB() {
   return new Promise((resolve, reject) => {
+    if (!window.indexedDB) { reject(new Error('IndexedDB unsupported')); return; }
     const request = indexedDB.open('science-pencil-v1', 1);
     request.onupgradeneeded = () => request.result.createObjectStore('records');
     request.onsuccess = () => resolve(request.result);
@@ -29,7 +29,13 @@ function openDB() {
 }
 async function read(key) {
   if (memory.has(key)) return memory.get(key);
-  if (!db) return undefined;
+  if (!db) {
+    try {
+      const val = localStorage.getItem('science-pencil:' + key);
+      if (val) return JSON.parse(val);
+    } catch {}
+    return undefined;
+  }
   return new Promise((resolve, reject) => {
     const request = db.transaction('records').objectStore('records').get(key);
     request.onsuccess = () => resolve(request.result);
@@ -40,8 +46,16 @@ function write(key, value) {
   const snapshot = structuredClone(value);
   memory.set(key, snapshot);
   $('save-status').textContent = '저장 중…';
+  if (!db) {
+    try {
+      localStorage.setItem('science-pencil:' + key, JSON.stringify(snapshot));
+      $('save-status').textContent = '이 기기에 저장됨';
+    } catch {
+      $('save-status').textContent = '메모리에 보관 중';
+    }
+    return Promise.resolve();
+  }
   pendingWrite = pendingWrite.then(() => new Promise((resolve, reject) => {
-    if (!db) { reject(new Error('No database')); return; }
     const tx = db.transaction('records', 'readwrite');
     tx.objectStore('records').put(snapshot, key);
     tx.oncomplete = resolve; tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error);
@@ -55,7 +69,16 @@ async function allRecords() {
     const request = db.transaction('records').objectStore('records').openCursor();
     request.onsuccess = () => { const cursor = request.result; if (!cursor) return resolve(); result[cursor.key] = cursor.value; cursor.continue(); };
     request.onerror = () => reject(request.error);
-  });
+  }).catch(() => {});
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith('science-pencil:')) {
+        const pureKey = k.slice('science-pencil:'.length);
+        if (!result[pureKey]) result[pureKey] = JSON.parse(localStorage.getItem(k));
+      }
+    }
+  } catch {}
   for (const [key, value] of memory) result[key] = value;
   return result;
 }
