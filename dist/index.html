@@ -11,6 +11,27 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="science/icon-180.png">
   <link rel="icon" href="science/icon-192.png">
+  <script>
+    // Clean up any legacy root Service Worker & old caches
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (const reg of regs) {
+          if (reg.scope.endsWith('/studybook/') || reg.scope.endsWith('/studybook') || reg.scope.endsWith(':8999/') || reg.scope.endsWith(':8080/')) {
+            reg.unregister();
+          }
+        }
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(keys => {
+        for (const k of keys) {
+          if (k.includes('science-pencil-static-v1') || k === 'science-pencil-v1') {
+            caches.delete(k);
+          }
+        }
+      });
+    }
+  </script>
   <style>
     :root {
       --bg: #0b1320;

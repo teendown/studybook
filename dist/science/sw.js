@@ -1,5 +1,5 @@
 'use strict';
-const CACHE = 'science-pencil-static-v1';
+const CACHE = 'science-pencil-static-v2';
 const CORE = ['./','index.html','style.css','app.js','questions.json','manifest.webmanifest','icon-180.png','icon-192.png','icon-512.png'];
 function valid(response) { return response && response.ok && !response.redirected && response.type !== 'opaque'; }
 self.addEventListener('install', event => event.waitUntil((async () => {
