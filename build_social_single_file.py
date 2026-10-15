@@ -91,7 +91,7 @@ def main():
         "const response = await fetch('questions.json'); if (!response.ok) throw new Error('문제 목록을 불러올 수 없습니다.');\n    questions = await response.json();",
         "questions = window.SOCIETY_BUNDLE.questions.map(q => ({...q, image:window.SOCIETY_BUNDLE.assets[q.image], source:window.SOCIETY_BUNDLE.assets[q.source]}));")
     app = replace_once(app,
-        "if ('serviceWorker' in navigator && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(() => { $('offline-status').textContent = '오프라인 기능을 준비하지 못했습니다. 온라인 학습은 가능합니다.'; });",
+        "if ('serviceWorker' in navigator && window.isSecureContext) navigator.serviceWorker.register('sw.js').then(reg => { reg.update(); }).catch(() => { $('offline-status').textContent = '오프라인 기능을 준비하지 못했습니다. 온라인 학습은 가능합니다.'; });",
         '// Standalone file: every asset is embedded; no service worker or server is needed.')
     
     app = re.sub(r"\$\('offline'\)\.onclick = async \(\) => \{.*?\n\};", "$('offline').onclick = () => toast('모든 문제와 이미지가 이미 이 파일에 들어 있습니다.');", app, flags=re.S)

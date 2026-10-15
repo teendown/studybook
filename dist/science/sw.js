@@ -1,7 +1,8 @@
 'use strict';
-const CACHE = 'science-pencil-static-v2';
+const CACHE = 'science-pencil-static-v3';
 const CORE = ['./','index.html','style.css','app.js','questions.json','manifest.webmanifest','icon-180.png','icon-192.png','icon-512.png'];
 function valid(response) { return response && response.ok && !response.redirected && response.type !== 'opaque'; }
+
 self.addEventListener('install', event => event.waitUntil((async () => {
   const cache = await caches.open(CACHE);
   for (const url of CORE) {
@@ -11,13 +12,39 @@ self.addEventListener('install', event => event.waitUntil((async () => {
   }
   await self.skipWaiting();
 })()));
-self.addEventListener('activate', event => event.waitUntil(self.clients.claim()));
+
+self.addEventListener('activate', event => event.waitUntil((async () => {
+  const keys = await caches.keys();
+  await Promise.all(keys.filter(k => k.startsWith('science-pencil-') && k !== CACHE).map(k => caches.delete(k)));
+  await self.clients.claim();
+})()));
+
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url), scope = new URL(self.registration.scope);
   if (event.request.method !== 'GET' || url.origin !== scope.origin || !url.pathname.startsWith(scope.pathname)) return;
   const relative = url.pathname.slice(scope.pathname.length);
-  const isAsset = /^(questions|pages)\/\d{3}\.webp$/.test(relative) || CORE.includes(relative) || relative === '';
-  if (!isAsset) return;
+  const isCore = CORE.includes(relative) || relative === '';
+  const isImage = /^(questions|pages)\/\d{3}\.webp$/.test(relative);
+  if (!isCore && !isImage) return;
+
+  if (isCore) {
+    event.respondWith((async () => {
+      try {
+        const response = await fetch(event.request, {cache: 'no-cache'});
+        if (valid(response)) {
+          const cache = await caches.open(CACHE);
+          await cache.put(event.request, response.clone());
+          return response;
+        }
+      } catch {}
+      const cache = await caches.open(CACHE);
+      const cached = await cache.match(event.request, {ignoreSearch:true});
+      if (cached) return cached;
+      return new Response('Offline', {status: 503, statusText: 'Offline'});
+    })());
+    return;
+  }
+
   event.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const cached = await cache.match(event.request,{ignoreSearch:true});
@@ -27,6 +54,7 @@ self.addEventListener('fetch', event => {
     return response;
   })());
 });
+
 self.addEventListener('message', event => {
   if (event.data?.type !== 'cache-all' || !event.ports[0]) return;
   const port = event.ports[0];

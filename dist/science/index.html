@@ -12,6 +12,15 @@
   <link rel="apple-touch-icon" href="icon-180.png">
   <link rel="icon" href="icon-192.png">
   <link rel="stylesheet" href="style.css">
+  <script>
+    if ('caches' in window) {
+      caches.keys().then(keys => {
+        for (const k of keys) {
+          if (k.includes('static-v1') || k.includes('static-v2')) caches.delete(k);
+        }
+      });
+    }
+  </script>
   <script src="app.js" defer></script>
 </head>
 <body>

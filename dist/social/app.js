@@ -366,7 +366,7 @@ async function boot() {
       deck = saved.deck; index = saved.index; await showQuestion(false);
     } else { $('review-only').checked = false; $('start').value = '12'; $('end').value = '169'; await newDeck(false); }
     setTool('pen');
-    if ('serviceWorker' in navigator && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(() => { $('offline-status').textContent = '오프라인 기능을 준비하지 못했습니다. 온라인 학습은 가능합니다.'; });
+    if ('serviceWorker' in navigator && window.isSecureContext) navigator.serviceWorker.register('sw.js').then(reg => { reg.update(); }).catch(() => { $('offline-status').textContent = '오프라인 기능을 준비하지 못했습니다. 온라인 학습은 가능합니다.'; });
   } catch (error) { warn(`${error.message} 인터넷 연결을 확인한 뒤 새로고침해 주세요.`); $('save-status').textContent = '시작 실패'; }
   finally { busy = false; }
 }
