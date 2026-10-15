@@ -46,7 +46,7 @@
       <div class="tool-group"><button id="undo" aria-label="실행 취소" title="실행 취소">↶</button><button id="redo" aria-label="다시 실행" title="다시 실행">↷</button><button id="clear" title="현재 문제의 필기 모두 지우기">비우기</button></div>
     </div>
     <div class="paper-options"><label class="check"><input id="pencil-only" type="checkbox" checked> 펜슬 전용</label><span id="mode-hint">필기 중 손 터치는 무시해요. 스크롤은 ‘이동’ 도구로.</span><button id="source" class="quiet">원본 보기 ↗</button></div>
-    <div id="paper-scroll" class="paper-scroll"><div id="paper" class="paper"><img id="question-image" alt="현재 문제 원본" draggable="false"><div class="scratch-label">나의 풀이 <span>생각을 자유롭게 적어 보세요</span></div><canvas id="ink" aria-label="문제와 풀이 공간에 필기하는 캔버스"></canvas></div></div>
+    <div id="paper-scroll" class="paper-scroll"><div id="paper" class="paper"><img id="question-image" alt="현재 문제 원본" draggable="false"><div class="scratch-label" aria-hidden="true"></div><canvas id="ink" aria-label="문제와 풀이 공간에 필기하는 캔버스"></canvas></div></div>
     <nav class="navigation" aria-label="문제 이동"><button id="previous">← 이전 문제</button><span id="position">—</span><button id="next" class="primary">다음 문제 →</button></nav>
   </main>
 </div>
